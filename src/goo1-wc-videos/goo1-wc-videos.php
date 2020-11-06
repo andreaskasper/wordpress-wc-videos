@@ -34,7 +34,7 @@ if (!class_exists("Puc_v4_Factory")) {
 	require_once(__DIR__."/plugin-update-checker/plugin-update-checker.php");
 }
 $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-    "https://raw.githubusercontent.com/andreaskasper/wordpress-wc-videos/master/dist/updater.json",
+    "https://raw.githubusercontent.com/andreaskasper/wordpress-wc-videos/main/dist/updater.json",
     __FILE__, //Full path to the main plugin file or functions.php.
     "goo1-wc-videos"
 );
