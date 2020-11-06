@@ -10,7 +10,8 @@ class core {
   
   public static function goo1_loaded() {
 
-    add_action( 'init', function() {
+
+    //add_action( 'init', function() {
       $args = array(
           'label' => __( 'Videos', 'kp_workshops' ),
           'description' => __( 'Videos für den Memberbereich', 'kp_workshops' ),
@@ -21,7 +22,7 @@ class core {
           'public' => true,
           'show_ui' => true,
           'show_in_menu' => true,
-          'menu_position' => 20,
+          'menu_position' => 4,
           'menu_icon' => 'dashicons-format-video',
           'rewrite'     => array( 'slug' => 'videos' ),
           'show_in_admin_bar' => true,
@@ -34,7 +35,7 @@ class core {
           'show_in_rest' => true,
         );
           register_post_type( 'videos', $args );
-      }, 0);
+      //});
 
       
     
@@ -64,7 +65,6 @@ class core {
   }
 
   public static function woocommerce_loaded() {
-
     \plugins\goo1\wc\videos\woocommerce::init();
     
     /*add_filter( 'product_type_selector', function($types) {
