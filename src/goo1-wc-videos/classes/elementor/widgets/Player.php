@@ -44,7 +44,7 @@ class Player extends \Elementor\Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Dance Video Player', 'plugin-name' );
+		return __( 'Dance Video Player', "goo1-wc-videos" );
 	}
 
 	/**
@@ -115,14 +115,156 @@ class Player extends \Elementor\Widget_Base {
 		}
 
 		$this->add_control(
-			'pathpre_video',
+			'source',
 			[
-				'label' => __( 'Source', 'plugin-domain' ),
+				'label' => __( 'Source', 'goo1-wc-videos' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
 				'default' => null,
-				'options' => $arr,
+				'options' => array(
+					"5678.video" => "5678.video",
+					"wordpress" => "selfhosted",
+					"youtube" => "YouTube",
+					"vimeo" => "Vimeo",
+					"url" => "custom URL"
+				),
 			]
 		);
+
+		/*$this->add_control(
+			'multiangle',
+			[
+				'label' => __( 'Multiangle', 'goo1-wc-videos' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => __( 'Yes', 'your-plugin' ),
+				'label_off' => __( 'No', 'your-plugin' ),
+				'return_value' => '1',
+				'default' => '',
+				'condition' => [
+					'source' => ['wordpress', "url"]
+				]
+			]
+		);
+
+		$this->add_control(
+			'multiquality',
+			[
+				'label' => __( 'Multiple Qualities', 'goo1-wc-videos' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => __( 'Yes', 'your-plugin' ),
+				'label_off' => __( 'No', 'your-plugin' ),
+				'return_value' => '1',
+				'default' => '',
+				'condition' => [
+					'source' => ['url']
+				]
+			]
+		);*/
+
+		$this->add_control(
+			'youtube_id',
+			[
+				'label' => __( 'YouTube ID', "goo1-wc-videos" ),
+				'type' => \Elementor\Controls_Manager::TEXT,
+				'condition' => [
+					'source' => ['youtube']
+				]
+			],
+		);
+
+		$this->add_control(
+			'vimeo_id',
+			[
+				'label' => __( 'Vimeo ID', "goo1-wc-videos" ),
+				'type' => \Elementor\Controls_Manager::TEXT,
+				'condition' => [
+					'source' => ['vimeo']
+				]
+			],
+		);
+
+		$this->add_control(
+			'url_index_json',
+			[
+				'label' => __( 'Index json (optional)', "goo1-wc-videos" ),
+				'type' => \Elementor\Controls_Manager::URL,
+				'condition' => [
+					'source' => ['url'],
+				]
+			]
+        );
+
+		$repeater = new \Elementor\Repeater();
+        $repeater->add_control(
+			'url',
+			[
+				'label' => __( 'URL Video', "goo1-wc-videos" ),
+				'type' => \Elementor\Controls_Manager::URL,
+				'input_type' => 'number',
+				'placeholder' => __( '', "goo1-wc-videos" ),
+			]
+		);
+
+		$repeater->add_control(
+			'quality',
+			[
+				'label' => __( 'Video Quality', "goo1-wc-videos" ),
+				'type' => \Elementor\Controls_Manager::SELECT,
+				'default' => "1080p",
+				'options' => array("2160p" => "2160p 4K", '1080p' => "1080p FullHD", "480p" => "480p SD", "240p" => "240p Mobile"),
+			]
+		);
+
+		$repeater->add_control(
+			'format',
+			[
+				'label' => __( 'Video Format', 'goo1-wc-videos' ),
+				'type' => \Elementor\Controls_Manager::SELECT,
+				'default' => "mp4",
+				'options' => array("mp4" => "mp4", 'webm' => "webm"),
+			]
+		);
+
+		$repeater->add_control(
+			'angle',
+			[
+				'label' => __( 'Camera Angle', 'goo1-wc-videos' ),
+				'type' => \Elementor\Controls_Manager::SELECT,
+				'default' => "front",
+				'options' => array("front" => "Front", 'top' => "Top", "side" => "Side", "feet" => "Feet"),
+			]
+		);
+
+		
+		/*$a = $this->get_settings_for_display("wcpids");
+		print_r($a);
+
+		$product = wc_get_product( id );
+		$pt = $product->get_title();*/
+		
+		$this->add_control(
+			'video_urls',
+			[
+				'label' => __( 'Video URLs', 'plugin-domain' ),
+				'type' => \Elementor\Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
+				'default' => [],
+				'title_field' => 'Video: {{{ quality }}} {{{ angle }}} {{{ format }}}',
+				'condition' => [
+					'source' => ['url']
+				]
+			]
+		);
+
+		$this->add_control(
+			'url_chapters_vtt',
+			[
+				'label' => __( 'URL chapters.vtt', "goo1-wc-videos" ),
+				'type' => \Elementor\Controls_Manager::URL,
+				'condition' => [
+					'source' => ['url'],
+				]
+			]
+        );
 		
 		/*$this->add_control(
 			'url_mp4',
@@ -159,7 +301,7 @@ class Player extends \Elementor\Widget_Base {
         $this->add_control(
 			'poster_local',
 			[
-				'label' => __( 'Ersatzvorschaubild', 'plugin-domain' ),
+				'label' => __( 'Ersatzvorschaubild', "goo1-wc-videos" ),
 				'type' => \Elementor\Controls_Manager::MEDIA
 			]
 		);
@@ -168,6 +310,100 @@ class Player extends \Elementor\Widget_Base {
 
 		$this->end_controls_section();
 
+		$this->start_controls_section(
+			'restictaccess_section',
+			[
+				'label' => __( 'Restrict Access', "goo1-wc-videos" ),
+				'tab' => \Elementor\Controls_Manager::TAB_CONTENT
+			]
+		);
+
+		$this->add_control(
+			'is_admin_allowed',
+			[
+				'label' => __( 'Admin don\'t need to buy', 'goo1-wc-videos' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => __( 'Yes', 'your-plugin' ),
+				'label_off' => __( 'No', 'your-plugin' ),
+				'return_value' => '1',
+				'default' => '1'
+			]
+		);
+
+		$repeater = new \Elementor\Repeater();
+        $repeater->add_control(
+			'product_id',
+			[
+				'label' => __( 'WooCommerce Product ID', 'plugin-name' ),
+				'type' => \Elementor\Controls_Manager::TEXT,
+				'input_type' => 'number',
+				'placeholder' => __( '', 'plugin-name' ),
+			]
+		);
+
+		/*$a = $this->get_settings_for_display("wcpids");
+		print_r($a);
+
+		$product = wc_get_product( id );
+		$pt = $product->get_title();*/
+		
+		$this->add_control(
+			'woocommerce_product_ids',
+			[
+				'label' => __( 'Woocommerce Products', 'plugin-domain' ),
+				'type' => \Elementor\Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
+				'default' => [],
+				'title_field' => 'PID: {{{ product_id }}}',
+			]
+		);
+
+		$this->add_control(
+			'swpm',
+			[
+				'label' => __( 'SWPM Free Members', 'goo1-wc-videos' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => __( 'Allowed', 'your-plugin' ),
+				'label_off' => __( 'Disallowed', 'your-plugin' ),
+				'return_value' => '1',
+				'default' => '1'
+			]
+		);
+
+		$this->add_control(
+			'url_buy',
+			[
+				'label' => __( 'URL to buy', 'plugin-domain' ),
+				'type' => \Elementor\Controls_Manager::URL
+			]
+        );
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'player-options',
+			[
+				'label' => __( 'Options', "goo1-wc-videos" ),
+				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+				'condition' => [
+					'source' => ['url'],
+				]
+			]
+		);
+
+		$this->add_control(
+			'is_hotkeys',
+			[
+				'label' => __( 'Hotkeys', 'goo1-wc-videos' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => __( 'enabled', "goo1-wc-videos" ),
+				'label_off' => __( 'disabled', "goo1-wc-videos" ),
+				'return_value' => '1',
+				'default' => '1'
+			]
+		);
+
+		$this->end_controls_section();
 		
 
     }
@@ -181,157 +417,111 @@ class Player extends \Elementor\Widget_Base {
 	 * @access protected
 	 */
     protected function render() {
-        $settings = $this->get_settings_for_display();
-        
-        //print_r($settings);
-
-        $id = "player".md5(microtime(true));
-
+		$settings = $this->get_settings_for_display();
 		
 		echo('<div style="position: relative; display: block; width:100%; height: 0px; padding-bottom: 56.25%; overflow: hidden; background: black;">');
 		echo('<div style="position: absolute; display: block; width:100%; height: 100%; left: 0px; top: 0px; background: black;">');
-		echo('<video id="'.$id.'" class="video-js vjs-default-skin" controls playsinline controlsList="nodownload" preload="auto" style="width:100%; height:100%;">');
-		echo('<!-- '.$this->get_video_dir().$settings["pathpre_video"]."1080p.mp4".' -->');
-		echo('<!-- '.$this->get_video_urlpath().$settings["pathpre_video"]."1080p.mp4".' -->');
-        if (!empty($settings["pathpre_video"]) AND file_exists($this->get_video_dir().$settings["pathpre_video"]."1080p.mp4")) echo('<source src="'.$this->get_video_urlpath().$settings["pathpre_video"].'1080p.mp4" type="video/mp4"/>'.PHP_EOL);
-        
-        if (!empty($settings["url_chapters_vtt"]["url"])) echo('<track src="'.$settings["url_chapters_vtt"]["url"].'" kind="chapters" label="Kapitel" srclang="de">'.PHP_EOL);
+        switch ($settings["source"]) {
+			case "youtube":
+				$this->render_youtube($settings);
+				break;
+			case "vimeo":
+				$this->render_vimeo($settings);
+				break;
+			case "url":
+				$this->render_customurls($settings);
+				break;
+			default:
+				print_r($settings);
+		}
+		echo('</div></div>');
+	}
 
-	/*if (file_exists($folder_videos.$settings["file_prefix"].".en.vtt")) echo('<track src="'.$urlpath_videos.$settings["file_prefix"].'.en.vtt" kind="captions" srclang="en" label="English">'.PHP_EOL);
-	if (file_exists($folder_videos.$settings["file_prefix"].".de.vtt")) echo('<track src="'.$urlpath_videos.$settings["file_prefix"].'.de.vtt" kind="captions" srclang="de" label="Deutsch">'.PHP_EOL);
+	private function render_customurls($settings) {
+		$w = array();
+		foreach ($settings["video_urls"] as $row) {
+			$b = array();
+			$b["quality"] = $row["quality"];
+			$b["format"] = $row["format"];
+			$b["angle"] = $row["angle"];
+			$b["url"] = $row["url"]["url"];
+			$w[] = $b;
+		}
+		//print_r($settings["video_urls"]);
+		$this->render_filesarray($w, $settings);
+	}
 
-	if (file_exists($folder_videos.$settings["file_prefix"].".chapters.en.vtt")) echo('<track src="'.$urlpath_videos.$settings["file_prefix"].'.chapters.en.vtt" kind="chapters" label="Chapters" srclang="en">'.PHP_EOL);
-	if (file_exists($folder_videos.$settings["file_prefix"].".chapters.de.vtt")) echo('<track src="'.$urlpath_videos.$settings["file_prefix"].'.chapters.de.vtt" kind="chapters" label="Kapitel" srclang="en">'.PHP_EOL);*/
-	
-	echo('<p class="vjs-no-js">please enable Javascript to watch the video</p>
-</video>');
+	private function render_filesarray($urls, $settings) {
+		//print_r($settings);
 
-		echo('</div>');
-		echo('</div>');
+		$id = "player".md5(microtime(true));
 
-    	echo('<link href="https://vjs.zencdn.net/7.8.2/video-js.css" rel="stylesheet" />');
-		echo('<script src="https://vjs.zencdn.net/7.8.2/video.js"></script>');
+		echo('<script>');
+		echo('var player_data = '.json_encode($urls).';');
+		echo('console.log(player_data);');
+		echo('</script>');
+
+
+		echo('<video id="'.$id.'" class="video-js vjs-default-skin" controls playsinline controlsList="nodownload" poster="'.($settings["poster_local"]["url"] ?? "").'" preload="auto" style="width:100%; height:100%;">');
+		
+		$rows = $this->best_of_front($urls);
+		foreach ($rows as $k => $row) {
+			if ($k == "mp4") echo('<source src="'.$row["url"].'" type="video/mp4"/>'.PHP_EOL);
+			if ($k == "webm") echo('<source src="'.$row["url"].'" type="video/webm"/>'.PHP_EOL);
+		}
+
+		if (!empty($settings["url_chapters_vtt"]["url"])) echo('<track src="'.$settings["url_chapters_vtt"]["url"].'" kind="chapters" label="Kapitel" srclang="de">'.PHP_EOL);
+
+		/*if (file_exists($folder_videos.$settings["file_prefix"].".en.vtt")) echo('<track src="'.$urlpath_videos.$settings["file_prefix"].'.en.vtt" kind="captions" srclang="en" label="English">'.PHP_EOL);
+		if (file_exists($folder_videos.$settings["file_prefix"].".de.vtt")) echo('<track src="'.$urlpath_videos.$settings["file_prefix"].'.de.vtt" kind="captions" srclang="de" label="Deutsch">'.PHP_EOL);
+
+		if (file_exists($folder_videos.$settings["file_prefix"].".chapters.en.vtt")) echo('<track src="'.$urlpath_videos.$settings["file_prefix"].'.chapters.en.vtt" kind="chapters" label="Chapters" srclang="en">'.PHP_EOL);
+		if (file_exists($folder_videos.$settings["file_prefix"].".chapters.de.vtt")) echo('<track src="'.$urlpath_videos.$settings["file_prefix"].'.chapters.de.vtt" kind="chapters" label="Kapitel" srclang="en">'.PHP_EOL);*/
+
+		echo('<p class="vjs-no-js">please enable Javascript to watch the video</p>
+		</video>');
+
+/* Check for new version at
+ *
+ *       https://videojs.com/getting-started
+ * 
+ */
+		echo('<link href="https://vjs.zencdn.net/7.8.4/video-js.css" rel="stylesheet" />');
+		echo('<script src="https://vjs.zencdn.net/7.8.4/video.js"></script>');
 
 		?>
 <style>
 /*.vjs-picture-in-picture-control { display: none !important; }*/
-.vjs-control button.vjs-cams-button { width: 20px; background: url(/wp-content/plugins/andreaskasper/assets/images/videojs_cam.png) no-repeat center center; padding-left: 0px; padding-right: 0px; }
-.vjs-control button.vjs-min10sec-button { width: 20px; background: url(/wp-content/plugins/goo1-mediamarc/assets/videojs_min10sec.png) no-repeat center center; padding-left: 0px; padding-right: 0px; }
+.vjs-control button.vjs-cams-button { width: 20px; background: url(<?=site_url("/wp-content/plugins/goo1-wc-videos/assets/videojs_cam.png"); ?>) no-repeat center center; padding-left: 0px; padding-right: 0px; }
+.vjs-control button.vjs-min10sec-button { width: 20px; background: url(<?=site_url("/wp-content/plugins/goo1-wc-videos/assets/videojs_min10sec.png"); ?>) no-repeat center center; padding-left: 0px; padding-right: 0px; }
 .video-js .vjs-big-play-button { margin: -24px 0px 0px -45px; top: 50% !important; left: 50% !important; }
 .vjs-quality-button .vjs-quality-value { pointer-events: none; font-size: 1.5em; line-height: 2; text-align: center; }
 </style>
 <script>
-var akvjs = {
-	init: function(id, options) {
-		console.log("Optionen", options);
-		akvjs.options = options;
-		akvjs.id = id;
-		akvjs.ele = jQuery(id);
-		akvjs.quality = 1080;
-		akvjs.vjs = videojs(id, {"playbackRates": [0.25, 0.5, 1.0, 2.0], "poster": "<?=$settings["url_poster"]["url"]; ?>"}, function(){
-			console.log(akvjs.ele.length);
-			jQuery(akvjs.id+" .vjs-progress-control").before('<div class="vjs-min10sec-button vjs-menu-button vjs-control vjs-button"><button class="vjs-min10sec-button vjs-button" type="button" aria-disabled="false" title="10sec zurück" aria-haspopup="true" aria-expanded="false"><span aria-hidden="true" class="vjs-icon-placeholder"></span><span class="vjs-control-text" aria-live="polite">-10sec</span></button></div>');
-
-			jQuery(akvjs.id+" div.vjs-audio-button").after('<div class="vjs-quality-button vjs-menu-button vjs-menu-button-popup vjs-control vjs-button"><div class="vjs-quality-value">HD</div><button class="vjs-quality-rate vjs-menu-button vjs-menu-button-popup vjs-button" type="button" aria-disabled="false" title="Playback Rate" aria-haspopup="true" aria-expanded="false"><span aria-hidden="true" class="vjs-icon-placeholder"></span><span class="vjs-control-text" aria-live="polite">Playback Rate</span></button><div class="vjs-menu"><ul class="vjs-menu-content" role="menu"><li class="vjs-menu-title">Qualität</li></ul></div></div>');
-			jQuery(akvjs.id+" div.vjs-quality-button ul").append('<li class="vjs-menu-item" role="menuitemradio" aria-disabled="false" tabindex="-1" aria-checked="false" onclick="akvjs.setquality(1080);"><span class="vjs-menu-item-text">1080p</span><span class="vjs-control-text" aria-live="polite"></span></li>');
-			jQuery(akvjs.id+" div.vjs-quality-button ul").append('<li class="vjs-menu-item" role="menuitemradio" aria-disabled="false" tabindex="-1" aria-checked="false" onclick="akvjs.setquality(480);"><span class="vjs-menu-item-text">480p</span><span class="vjs-control-text" aria-live="polite"></span></li>');
-			jQuery(akvjs.id+" div.vjs-quality-button ul").append('<li class="vjs-menu-item" role="menuitemradio" aria-disabled="false" tabindex="-1" aria-checked="false" onclick="akvjs.setquality(240);"><span class="vjs-menu-item-text">240p</span><span class="vjs-control-text" aria-live="polite"></span></li>');
-			jQuery("div.vjs-quality-button").hover(function() {
-				console.log("hover quality");
-				jQuery(this).addClass("vjs-hover");
-			}, function() {
-				jQuery(this).removeClass("vjs-hover");
-			});
-			
-			jQuery("button.vjs-min10sec-button").click(function() {
-				akvjs.secback(10);
-			});
-
-			console.log("player loaded", akvjs.vjs.language(), akvjs.vjs);
-		});
-	},
-	enable_hotkeys: function() {
-		jQuery(document).on("keypress", function(event) {
-			switch (event.charCode) {
-				case 32: /*Spacebar*/
-					var isPlaying = !akvjs.vjs.paused();
-					if (isPlaying) akvjs.vjs.pause(); else akvjs.vjs.play();
-					return false;
-				case 106: /*j - minus 10sec*/
-					akvjs.secback(10);
-					return false;
-				case 108: /*l - plus 10 sec*/
-					akvjs.secforward(10);
-					return false;
-				case 117:
-					akvjs.vjs.playbackRate(0.25);
-					return false;
-				case 105:
-					akvjs.vjs.playbackRate(0.5);
-					return false;
-				case 111:
-					akvjs.vjs.playbackRate(1);
-					return false;
-				case 109: /*m - mute*/
-					var a = akvjs.vjs.muted();
-					akvjs.vjs.muted(!a);
-					return false;
-				case 103: /*g - -1frame*/
-					akvjs.vjs.pause();
-					akvjs.secback(1/60);
-					return false;
-				case 104: /*h - +1frame */
-					akvjs.vjs.pause();
-					akvjs.secforward(1/60);
-					return false;
-			}
-		//alert('Handler for .keypress() called. - ' + event.charCode);
-		});
-	},
-	setquality: function(value) {
-		console.log("switch to quality", value);
-		akvjs.quality = value;
-		switch (value) {
-			case 1080:
-				jQuery(akvjs.id+" div.vjs-quality-value").text('HD');
-				break;
-			case 480:
-				jQuery(akvjs.id+" div.vjs-quality-value").text('SD');
-				break;
-			case 240:
-				jQuery(akvjs.id+" div.vjs-quality-value").html('<i class="far fa-mobile-android-alt"></i>');
-				break;
-			case 120:
-				jQuery(akvjs.id+" div.vjs-quality-value").html('<i class="fas fa-pager"></i>');
-				break;
-		}
-		var pos = akvjs.vjs.currentTime();
-		akvjs.loadsource();
-		akvjs.vjs.play();
-		akvjs.vjs.currentTime(pos);
-	},
-	secback: function (sec) {
-		var pos = akvjs.vjs.currentTime();
-		pos = Math.max(0, pos - sec);
-		akvjs.vjs.currentTime(pos);
-	},
-	secforward: function (sec) {
-		var pos = akvjs.vjs.currentTime();
-		pos = Math.min(akvjs.vjs.duration(), pos +sec);
-		akvjs.vjs.currentTime(pos);
-	}
-}
+<?php
+readfile(__DIR__."/player.js");
+?>
 
 jQuery(document).ready(function($) {
-    akvjs.init("#<?=$id ?>", <?=json_encode(array()); ?>);
-    akvjs.enable_hotkeys();
+akvjs.init("#<?=$id ?>", <?=json_encode(array()); ?>);
+akvjs.enable_hotkeys();
 });
 </script>
 <?php
 	}
-
-
 	
+	private function render_youtube($settings) {
+		if (empty($settings["youtube_id"])) { echo('YouTube-ID is missing'); return; }
+		if (!preg_match ("@^[A-Za-z0-9]+$@", $settings["youtube_id"])) { echo('Strange YouTube-ID'); return; }
+		echo('<iframe width="100%" height="100%" src="https://www.youtube.com/embed/'.$settings["youtube_id"].'" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+	}
+
+	private function render_vimeo($settings) {
+		if (empty($settings["vimeo_id"])) { echo('Vimeo-ID is missing'); return; }
+		if (!preg_match ("@^[0-9]+$@", $settings["vimeo_id"])) { echo('Strange Vimeo-ID'); return; }
+		echo('<iframe src="https://player.vimeo.com/video/243115097" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>');
+	}
+		
 
 	private static function get5678index($mustreload = false) {
 		$local = __DIR__."/5678-index.json";
@@ -345,5 +535,16 @@ jQuery(document).ready(function($) {
 		}
 		$str = file_get_contents($local);
 		return json_decode($str,true);
+	}
+
+	private function best_of_front(Array $urls) {
+		$out = array();
+		$ql = array("------", "2160p", "1080p", "480p", "240p");
+		foreach ($urls as $row) {
+			if ($row["angle"] != "front") continue;
+			$a = $row["format"];
+			if (!isset($out[$a]) OR array_search($row["quality"],$ql) < array_search($out[$a]["quality"],$ql)) $out[$a] = $row;
+		}
+		return $out;
 	}
 }
