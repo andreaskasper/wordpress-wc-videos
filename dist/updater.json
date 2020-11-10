@@ -16,12 +16,12 @@
         "Kontakt_Andreas": ""
     },
     "icons": {
-        "1x": "https:\/\/raw.githubusercontent.com\/andreaskasper\/wordpress-wc-videos\/master\/dist\/logo_128.png",
-        "2x": "https:\/\/raw.githubusercontent.com\/andreaskasper\/wordpress-wc-videos\/master\/dist\/logo_256.png"
+        "1x": "https:\/\/raw.githubusercontent.com\/andreaskasper\/wordpress-wc-videos\/main\/dist\/logo_256.png",
+        "2x": "https:\/\/raw.githubusercontent.com\/andreaskasper\/wordpress-wc-videos\/main\/dist\/logo_256.png"
     },
     "banners": {
-        "low": "https:\/\/raw.githubusercontent.com\/andreaskasper\/wordpress-wc-videos\/master\/dist\/banner_250.jpg",
-        "high": "https:\/\/raw.githubusercontent.com\/andreaskasper\/wordpress-wc-videos\/master\/dist\/banner_500.jpg"
+        "low": "https:\/\/raw.githubusercontent.com\/andreaskasper\/wordpress-wc-videos\/main\/dist\/banner_250.jpg",
+        "high": "https:\/\/raw.githubusercontent.com\/andreaskasper\/wordpress-wc-videos\/main\/dist\/banner_500.jpg"
     },
     "translations": [],
     "rating": 90,

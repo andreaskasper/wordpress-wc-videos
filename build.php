@@ -1,5 +1,7 @@
 <?php
 
+$changes = readline("Änderung: ");
+
 // Get real path for our folder
 $rootPath = __DIR__."/src/goo1-wc-videos/";
 
@@ -51,4 +53,8 @@ $json["version"] = $version;
 $json["last_updated"] = date("Y-m-d H:i:s");
 
 file_put_contents(__DIR__."/dist/updater.json", json_encode($json, JSON_PRETTY_PRINT));
+
+exec('git add "'.__DIR__.'/*"');
+exec('git commit -m "'.$changes.'"');
+exec('git push');
 echo("fertig".PHP_EOL.PHP_EOL);
