@@ -125,6 +125,7 @@ class Player extends \Elementor\Widget_Base {
 					"wordpress" => "selfhosted",
 					"youtube" => "YouTube",
 					"vimeo" => "Vimeo",
+					"medialibrary" => "Media Library",
 					"url" => "custom URL"
 				),
 			]
@@ -199,7 +200,6 @@ class Player extends \Elementor\Widget_Base {
 			[
 				'label' => __( 'URL Video', "goo1-wc-videos" ),
 				'type' => \Elementor\Controls_Manager::URL,
-				'input_type' => 'number',
 				'placeholder' => __( '', "goo1-wc-videos" ),
 			]
 		);
@@ -251,6 +251,70 @@ class Player extends \Elementor\Widget_Base {
 				'title_field' => 'Video: {{{ quality }}} {{{ angle }}} {{{ format }}}',
 				'condition' => [
 					'source' => ['url']
+				]
+			]
+		);
+
+		$repeater = new \Elementor\Repeater();
+        $repeater->add_control(
+			'media',
+			[
+				'label' => __( 'URL Video', "goo1-wc-videos" ),
+				'type' => \Elementor\Controls_Manager::MEDIA,
+				'placeholder' => __( '', "goo1-wc-videos" ),
+				/*'default' => [
+					'url' => \Elementor\Utils::get_placeholder_video_src(),
+				]*/
+			]
+		);
+
+		$repeater->add_control(
+			'quality',
+			[
+				'label' => __( 'Video Quality', "goo1-wc-videos" ),
+				'type' => \Elementor\Controls_Manager::SELECT,
+				'default' => "1080p",
+				'options' => array("2160p" => "2160p 4K", '1080p' => "1080p FullHD", "480p" => "480p SD", "240p" => "240p Mobile"),
+			]
+		);
+
+		$repeater->add_control(
+			'format',
+			[
+				'label' => __( 'Video Format', 'goo1-wc-videos' ),
+				'type' => \Elementor\Controls_Manager::SELECT,
+				'default' => "mp4",
+				'options' => array("mp4" => "mp4", 'webm' => "webm"),
+			]
+		);
+
+		$repeater->add_control(
+			'angle',
+			[
+				'label' => __( 'Camera Angle', 'goo1-wc-videos' ),
+				'type' => \Elementor\Controls_Manager::SELECT,
+				'default' => "front",
+				'options' => array("front" => "Front", 'top' => "Top", "side" => "Side", "feet" => "Feet"),
+			]
+		);
+
+		
+		/*$a = $this->get_settings_for_display("wcpids");
+		print_r($a);
+
+		$product = wc_get_product( id );
+		$pt = $product->get_title();*/
+		
+		$this->add_control(
+			'medias',
+			[
+				'label' => __( 'Media Videos', "goo1-wc-videos" ),
+				'type' => \Elementor\Controls_Manager::REPEATER,
+				'fields' => $repeater->get_controls(),
+				'default' => [],
+				'title_field' => 'Video: {{{ quality }}} {{{ angle }}} {{{ format }}}',
+				'condition' => [
+					'source' => ["medialibrary"]
 				]
 			]
 		);
@@ -421,12 +485,18 @@ class Player extends \Elementor\Widget_Base {
 		
 		echo('<div style="position: relative; display: block; width:100%; height: 0px; padding-bottom: 56.25%; overflow: hidden; background: black;">');
 		echo('<div style="position: absolute; display: block; width:100%; height: 100%; left: 0px; top: 0px; background: black;">');
-        switch ($settings["source"]) {
+        switch ($settings["source"] ?? "") {
+			case "":
+				echo(__("Please choose a video source ", "goo1-wc-videos"));
+				break;
 			case "youtube":
 				$this->render_youtube($settings);
 				break;
 			case "vimeo":
 				$this->render_vimeo($settings);
+				break;
+			case "medialibrary":
+				$this->render_medialibrary($settings);
 				break;
 			case "url":
 				$this->render_customurls($settings);
@@ -435,6 +505,20 @@ class Player extends \Elementor\Widget_Base {
 				print_r($settings);
 		}
 		echo('</div></div>');
+	}
+
+	private function render_medialibrary($settings) {
+		$w = array();
+		foreach ($settings["medias"] as $row) {
+			$b = array();
+			$b["quality"] = $row["quality"];
+			$b["format"] = $row["format"];
+			$b["angle"] = $row["angle"];
+			$b["url"] = $row["media"]["url"];
+			$w[] = $b;
+		}
+		//print_r($settings["video_urls"]);
+		$this->render_filesarray($w, $settings);
 	}
 
 	private function render_customurls($settings) {

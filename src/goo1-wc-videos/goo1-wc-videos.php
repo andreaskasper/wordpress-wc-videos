@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/andreaskasper/
  * Description: Important functions for goo1 websites
  * Author: Andreas Kasper
- * Version: 0.1.14
+ * Version: 0.1.15
  * Author URI: https://github.com/andreaskasper/
  * Network: True
  * Text Domain: goo1-wc-videos
@@ -25,11 +25,17 @@ spl_autoload_register(function ($class_name) {
 });
 
 add_action( 'plugins_loaded', function() {
-    load_plugin_textdomain( 'goo1-wc-videos', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+    load_plugin_textdomain("goo1-wc-videos", FALSE, basename(dirname(__FILE__))."/languages/" );
 });
+ 
+register_activation_hook( __FILE__, ["\\plugins\\goo1\\wc\\videos\\install", "activation"]);
+register_deactivation_hook( __FILE__, ["\\plugins\\goo1\\wc\\videos\\install", "deactivation"]);
 add_action("goo1_omni_loaded", ["\\plugins\\goo1\\wc\\videos\\core", "goo1_loaded"]);
 \plugins\goo1\wc\videos\core::init();
 
+/*
+ * UPDATER
+ */
 if (!class_exists("Puc_v4_Factory")) {
 	require_once(__DIR__."/plugin-update-checker/plugin-update-checker.php");
 }
