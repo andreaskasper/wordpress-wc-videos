@@ -1,11 +1,11 @@
 {
     "name": "goo1 Video Dancestudio",
-    "version": "0.1.15",
+    "version": "0.1.16",
     "download_url": "https:\/\/github.com\/andreaskasper\/wordpress-wc-videos\/raw\/main\/dist\/goo1-wc-videos.zip",
     "homepage": "https:\/\/github.com\/andreaskasper\/",
     "requires": "4.5",
     "tested": "5.5.3",
-    "last_updated": "2020-11-11 19:02:04",
+    "last_updated": "2020-11-11 22:17:31",
     "upgrade_notice": "Dies ist das erste Upgrade. Es kommen erste Funktionen hinzu.",
     "author": "Andreas Kasper",
     "author_homepage": "https:\/\/goo1.de\/",

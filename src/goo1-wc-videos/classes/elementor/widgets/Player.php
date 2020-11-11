@@ -169,7 +169,7 @@ class Player extends \Elementor\Widget_Base {
 				'condition' => [
 					'source' => ['youtube']
 				]
-			],
+			]
 		);
 
 		$this->add_control(
@@ -180,7 +180,7 @@ class Player extends \Elementor\Widget_Base {
 				'condition' => [
 					'source' => ['vimeo']
 				]
-			],
+			]
 		);
 
 		$this->add_control(
